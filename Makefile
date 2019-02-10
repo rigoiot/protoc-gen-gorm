@@ -38,7 +38,7 @@ options:
 
 .PHONY: types
 types:
-	protoc --go_out=$(SRCPATH) types/types.proto
+	protoc --gogofast_out=paths=source_relative:. types/types.proto
 
 .PHONY: install
 install:
