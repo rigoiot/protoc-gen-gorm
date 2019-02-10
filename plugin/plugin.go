@@ -767,7 +767,7 @@ func (p *OrmPlugin) generateFieldConversion(message *generator.Descriptor, field
 		} else if coreType == protoTypeTimestamp { // Singular WKT Timestamp ---
 			if toORM {
 				p.P(`if m.`, fieldName, ` != nil {`)
-				p.P(`if to.`, fieldName, `, err = `, p.Import(ptypesImport), `.Timestamp(m.`, fieldName, `); err != nil {`)
+				p.P(`if to.`, fieldName, `, err = `, p.Import(ptypesImport), `.TimestampFromProto(m.`, fieldName, `); err != nil {`)
 				p.P(`return to, err`)
 				p.P(`}`)
 				p.P(`}`)

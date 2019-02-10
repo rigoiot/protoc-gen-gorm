@@ -264,7 +264,11 @@ func (p *OrmPlugin) generateApplyFieldMask(message *generator.Descriptor) {
 			p.P(`continue`)
 			p.P(`}`)
 			p.P(`if patchee.`, ccName, ` == nil {`)
-			p.P(`patchee.`, ccName, ` = &`, strings.TrimPrefix(fieldType, "*"), `{}`)
+			if fieldType == "*timestamp.Timestamp" {
+				p.P(`patchee.`, ccName, ` = &`, p.Import(ptypesImport), `.Timestamp{}`)
+			} else {
+				p.P(`patchee.`, ccName, ` = &`, strings.TrimPrefix(fieldType, "*"), `{}`)
+			}
 			p.P(`}`)
 			p.P(`childMask := &`, p.Import(fmImport), `.FieldMask{}`)
 			p.P(`for j := i; j < len(updateMask.Paths); j++ {`)
