@@ -44,7 +44,7 @@ dep ensure
 ### Installation
 
 To use this tool, install it from code with `make install`, `go install` directly,
-or `go get github.com/infobloxopen/protoc-gen-gorm`.
+or `go get github.com/rigoiot/protoc-gen-gorm`.
 
 ### Usage
 
