@@ -1,5 +1,7 @@
 # protoc-gen-gorm
 
+This project is forked from https://github.com/infobloxopen/protoc-gen-gorm, and we make some experimental testes base our project. Please refer the origin project if you have an interest in it.
+
 ### Purpose
 
 A protobuf (https://developers.google.com/protocol-buffers/) compiler plugin
