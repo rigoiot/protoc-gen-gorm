@@ -14,7 +14,7 @@ import (
 
 	"log"
 
-	"github.com/rigoiot/protoc-gen-gorm/options"
+	gorm "github.com/rigoiot/protoc-gen-gorm/options"
 )
 
 const (
@@ -107,7 +107,7 @@ type OrmPlugin struct {
 func (p *OrmPlugin) setFile(file *generator.FileDescriptor) {
 	p.currentFile = file
 	p.currentPackage = file.GetPackage()
-	p.Generator.SetFile(file.FileDescriptorProto)
+	p.Generator.SetFile(file.GetName())
 }
 
 // Name identifies the plugin
@@ -144,8 +144,8 @@ func (p *OrmPlugin) Generate(file *generator.FileDescriptor) {
 	// so that cross-file assocations within the same package work
 	if p.ormableTypes == nil {
 		p.ormableTypes = make(map[string]*OrmableType)
-		for _, fileProto := range p.AllFiles().GetFile() {
-			file := p.FileOf(fileProto)
+		for _, file := range p.allFiles() {
+			fileProto := file.FileDescriptorProto
 			p.fileImports[file] = newFileImports()
 			p.setFile(file)
 			// Preload just the types we'll be creating
@@ -182,8 +182,7 @@ func (p *OrmPlugin) Generate(file *generator.FileDescriptor) {
 				}
 			}
 		}
-		for _, fileProto := range p.AllFiles().GetFile() {
-			file := p.FileOf(fileProto)
+		for _, file := range p.allFiles() {
 			p.setFile(file)
 			p.parseServices(file)
 		}

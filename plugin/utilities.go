@@ -2,7 +2,9 @@ package plugin
 
 import (
 	"fmt"
+	"reflect"
 	"strings"
+	"unsafe"
 
 	"github.com/gogo/protobuf/proto"
 	"github.com/gogo/protobuf/protoc-gen-gogo/descriptor"
@@ -98,4 +100,14 @@ func isSpecialType(typeName string) bool {
 		return true
 	}
 	return false
+}
+
+// allFiles return the all FileDescriptor, hack teh allFiles in Generator
+func (p *OrmPlugin) allFiles() []*generator.FileDescriptor {
+
+	v := reflect.Indirect(reflect.ValueOf(p.Generator))
+	m := v.FieldByName("allFiles")
+	pv := unsafe.Pointer(m.UnsafeAddr())
+
+	return *(*[]*generator.FileDescriptor)(pv)
 }
