@@ -49,10 +49,10 @@ import context "context"
 import errors "errors"
 
 import field_mask1 "google.golang.org/genproto/protobuf/field_mask"
-import gateway1 "github.com/infobloxopen/atlas-app-toolkit/gateway"
+import gateway1 "github.com/rigoiot/atlas-app-toolkit/gateway"
 import go_uuid1 "github.com/satori/go.uuid"
 import gorm1 "github.com/jinzhu/gorm"
-import gorm2 "github.com/infobloxopen/atlas-app-toolkit/gorm"
+import gorm2 "github.com/rigoiot/atlas-app-toolkit/gorm"
 
 import fmt "fmt"
 import math "math"

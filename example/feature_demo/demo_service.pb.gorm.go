@@ -7,16 +7,16 @@ import context "context"
 import errors "errors"
 
 import field_mask1 "google.golang.org/genproto/protobuf/field_mask"
-import gateway1 "github.com/infobloxopen/atlas-app-toolkit/gateway"
+import gateway1 "github.com/rigoiot/atlas-app-toolkit/gateway"
 import gorm1 "github.com/jinzhu/gorm"
-import gorm2 "github.com/infobloxopen/atlas-app-toolkit/gorm"
-import query1 "github.com/infobloxopen/atlas-app-toolkit/query"
+import gorm2 "github.com/rigoiot/atlas-app-toolkit/gorm"
+import query1 "github.com/rigoiot/atlas-app-toolkit/query"
 
 import fmt "fmt"
 import math "math"
 import google_protobuf2 "github.com/golang/protobuf/ptypes/empty"
 import _ "google.golang.org/genproto/protobuf/field_mask"
-import _ "github.com/infobloxopen/atlas-app-toolkit/query"
+import _ "github.com/rigoiot/atlas-app-toolkit/query"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = fmt.Errorf

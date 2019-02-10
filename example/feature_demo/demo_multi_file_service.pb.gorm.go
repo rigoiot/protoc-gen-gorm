@@ -9,7 +9,7 @@ import gorm1 "github.com/jinzhu/gorm"
 
 import fmt "fmt"
 import math "math"
-import _ "github.com/infobloxopen/atlas-app-toolkit/query"
+import _ "github.com/rigoiot/atlas-app-toolkit/query"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = fmt.Errorf

@@ -22,7 +22,7 @@ import fmt "fmt"
 import math "math"
 import _ "github.com/rigoiot/protoc-gen-gorm/options"
 import google_protobuf1 "github.com/golang/protobuf/ptypes/timestamp"
-import atlas_rpc "github.com/infobloxopen/atlas-app-toolkit/rpc/resource"
+import atlas_rpc "github.com/rigoiot/atlas-app-toolkit/rpc/resource"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal

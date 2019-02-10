@@ -9,7 +9,7 @@ import math "math"
 import google_protobuf2 "github.com/golang/protobuf/ptypes/empty"
 import _ "github.com/rigoiot/protoc-gen-gorm/options"
 import google_protobuf4 "google.golang.org/genproto/protobuf/field_mask"
-import infoblox_api "github.com/infobloxopen/atlas-app-toolkit/query"
+import infoblox_api "github.com/rigoiot/atlas-app-toolkit/query"
 
 import (
 	context "golang.org/x/net/context"

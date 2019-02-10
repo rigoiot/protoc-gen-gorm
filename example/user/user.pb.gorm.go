@@ -22,17 +22,17 @@ import errors "errors"
 import strings "strings"
 import time "time"
 
-import auth1 "github.com/infobloxopen/atlas-app-toolkit/auth"
+import auth1 "github.com/rigoiot/atlas-app-toolkit/auth"
 import field_mask1 "google.golang.org/genproto/protobuf/field_mask"
 import gorm1 "github.com/jinzhu/gorm"
-import gorm2 "github.com/infobloxopen/atlas-app-toolkit/gorm"
+import gorm2 "github.com/rigoiot/atlas-app-toolkit/gorm"
 import ptypes1 "github.com/golang/protobuf/ptypes"
-import resource1 "github.com/infobloxopen/atlas-app-toolkit/gorm/resource"
+import resource1 "github.com/rigoiot/atlas-app-toolkit/gorm/resource"
 
 import fmt "fmt"
 import math "math"
 import _ "github.com/golang/protobuf/ptypes/timestamp"
-import _ "github.com/infobloxopen/atlas-app-toolkit/rpc/resource"
+import _ "github.com/rigoiot/atlas-app-toolkit/rpc/resource"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = fmt.Errorf
