@@ -198,7 +198,7 @@ func (p *OrmPlugin) generateApplyFieldMask(message *generator.Descriptor) {
 	typeName := p.TypeName(message)
 	p.P(`// DefaultApplyFieldMask`, typeName, ` patches an pbObject with patcher according to a field mask.`)
 	p.P(`func DefaultApplyFieldMask`, typeName, `(ctx context.Context, patchee *`,
-		typeName, `, patcher *`, typeName, `, updateMask *`, p.Import(fmImport),
+		typeName, `, patcher *`, typeName, `, updateMask *`, p.Import(ptypesImport),
 		`.FieldMask, prefix string, db *`, p.Import(gormImport), `.DB) (*`, typeName, `, error) {`)
 
 	p.P(`if patcher == nil {`)
@@ -239,11 +239,11 @@ func (p *OrmPlugin) generateApplyFieldMask(message *generator.Descriptor) {
 			p.P(`}`)
 			if s := strings.Split(fieldType, "."); len(s) == 2 {
 				p.P(`if o, err := `, strings.TrimLeft(s[0], "*"), `.DefaultApplyFieldMask`, s[1], `(ctx, patchee.`, ccName,
-					`, patcher.`, ccName, `, &`, p.Import(fmImport),
+					`, patcher.`, ccName, `, &`, p.Import(ptypesImport),
 					`.FieldMask{Paths:updateMask.Paths[i:]}, prefix+"`, ccName, `.", db); err != nil {`)
 			} else {
 				p.P(`if o, err := DefaultApplyFieldMask`, strings.TrimPrefix(fieldType, "*"), `(ctx, patchee.`, ccName,
-					`, patcher.`, ccName, `, &`, p.Import(fmImport),
+					`, patcher.`, ccName, `, &`, p.Import(ptypesImport),
 					`.FieldMask{Paths:updateMask.Paths[i:]}, prefix+"`, ccName, `.", db); err != nil {`)
 			}
 			p.P(`return nil, err`)
@@ -270,7 +270,7 @@ func (p *OrmPlugin) generateApplyFieldMask(message *generator.Descriptor) {
 				p.P(`patchee.`, ccName, ` = &`, strings.TrimPrefix(fieldType, "*"), `{}`)
 			}
 			p.P(`}`)
-			p.P(`childMask := &`, p.Import(fmImport), `.FieldMask{}`)
+			p.P(`childMask := &`, p.Import(ptypesImport), `.FieldMask{}`)
 			p.P(`for j := i; j < len(updateMask.Paths); j++ {`)
 			p.P(`if trimPath := strings.TrimPrefix(updateMask.Paths[j], prefix+"`, ccName, `."); trimPath != updateMask.Paths[j] {`)
 			p.P(`childMask.Paths = append(childMask.Paths, trimPath)`)
@@ -328,7 +328,7 @@ func (p *OrmPlugin) generatePatchHandler(message *generator.Descriptor) {
 
 	p.P(`// DefaultPatch`, typeName, ` executes a basic gorm update call with patch behavior`)
 	p.P(`func DefaultPatch`, typeName, `(ctx context.Context, in *`,
-		typeName, `, updateMask *`, p.Import(fmImport), `.FieldMask, db *`, p.Import(gormImport), `.DB) (*`, typeName, `, error) {`)
+		typeName, `, updateMask *`, p.Import(ptypesImport), `.FieldMask, db *`, p.Import(gormImport), `.DB) (*`, typeName, `, error) {`)
 
 	p.P(`if in == nil {`)
 	p.P(`return nil, errors.New("Nil argument to DefaultPatch`, typeName, `")`)
@@ -371,7 +371,7 @@ func (p *OrmPlugin) generatePatchHandler(message *generator.Descriptor) {
 
 func (p *OrmPlugin) generateBeforePatchHookDef(orm *OrmableType, suffix string) {
 	p.P(`type `, orm.OriginName, `WithBeforePatch`, suffix, ` interface {`)
-	p.P(`BeforePatch`, suffix, `(context.Context, *`, orm.OriginName, `, *`, p.Import(fmImport), `.FieldMask, *`, p.Import(gormImport),
+	p.P(`BeforePatch`, suffix, `(context.Context, *`, orm.OriginName, `, *`, p.Import(ptypesImport), `.FieldMask, *`, p.Import(gormImport),
 		`.DB) (*`, p.Import(gormImport), `.DB, error)`)
 	p.P(`}`)
 }
@@ -386,7 +386,7 @@ func (p *OrmPlugin) generateBeforePatchHookCall(orm *OrmableType, suffix string)
 
 func (p *OrmPlugin) generateAfterPatchHookDef(orm *OrmableType, suffix string) {
 	p.P(`type `, orm.OriginName, `WithAfterPatch`, suffix, ` interface {`)
-	p.P(`AfterPatch`, suffix, `(context.Context, *`, orm.OriginName, `, *`, p.Import(fmImport), `.FieldMask, *`, p.Import(gormImport),
+	p.P(`AfterPatch`, suffix, `(context.Context, *`, orm.OriginName, `, *`, p.Import(ptypesImport), `.FieldMask, *`, p.Import(gormImport),
 		`.DB) error`)
 	p.P(`}`)
 }
