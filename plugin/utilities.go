@@ -111,3 +111,21 @@ func (p *OrmPlugin) allFiles() []*generator.FileDescriptor {
 
 	return *(*[]*generator.FileDescriptor)(pv)
 }
+
+// if p.useStatusError {
+// 	p.P(`return nil, `, p.Import(statusImport), `.Error(`, p.Import(codesImport), `.`, `"Database Transaction For Request Missing")`)
+// } else {
+// 	p.UsingGoImports("errors")
+// 	p.P(`return nil, errors.New("Database Transaction For Request Missing")`)
+// }
+func (p *OrmPlugin) newError(code string) string {
+	if p.useStatusError {
+		if len(code) == 0 {
+			code = "Unknown"
+		}
+		return p.Import(statusImport) + ".Error(" + p.Import(codesImport) + "." + code + ", "
+	} else {
+		p.UsingGoImports("errors")
+		return "errors.New("
+	}
+}

@@ -102,6 +102,7 @@ type OrmPlugin struct {
 	messages        map[string]struct{}
 	ormableServices []autogenService
 	suppressWarn    bool
+	useStatusError  bool
 }
 
 func (p *OrmPlugin) setFile(file *generator.FileDescriptor) {
@@ -134,6 +135,9 @@ func (p *OrmPlugin) Init(g *generator.Generator) {
 	}
 	if _, ok := g.Param["quiet"]; ok {
 		p.suppressWarn = true
+	}
+	if _, ok := g.Param["status"]; ok {
+		p.useStatusError = true
 	}
 }
 

@@ -48,6 +48,8 @@ var (
 	queryImport    = "github.com/rigoiot/atlas-app-toolkit/query"
 	gatewayImport  = "github.com/rigoiot/atlas-app-toolkit/gateway"
 	pqImport       = "github.com/lib/pq"
+	statusImport   = "google.golang.org/grpc/status"
+	codesImport    = "google.golang.org/grpc/codes"
 )
 
 type pkgImport struct {
