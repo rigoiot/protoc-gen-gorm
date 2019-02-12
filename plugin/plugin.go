@@ -103,6 +103,7 @@ type OrmPlugin struct {
 	ormableServices []autogenService
 	suppressWarn    bool
 	useStatusError  bool
+	validation      bool
 }
 
 func (p *OrmPlugin) setFile(file *generator.FileDescriptor) {
@@ -138,6 +139,9 @@ func (p *OrmPlugin) Init(g *generator.Generator) {
 	}
 	if _, ok := g.Param["status"]; ok {
 		p.useStatusError = true
+	}
+	if _, ok := g.Param["validation"]; ok {
+		p.validation = true
 	}
 }
 

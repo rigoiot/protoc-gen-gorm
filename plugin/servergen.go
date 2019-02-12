@@ -516,17 +516,19 @@ func (p *OrmPlugin) generateMethodSignature(service autogenService, method autog
 // 	return nil, status.Error(codes.InvalidArgument, "Invalid req: "+err.Error())
 // }
 func (p *OrmPlugin) generateValidate() {
-	hasValidate := false
-	for _, dep := range p.currentFile.Dependency {
-		if strings.Contains(dep, "validate/validate.proto") {
-			hasValidate = true
-			break
+	if p.validation {
+		hasValidate := false
+		for _, dep := range p.currentFile.Dependency {
+			if strings.Contains(dep, "validate/validate.proto") {
+				hasValidate = true
+				break
+			}
 		}
-	}
-	if hasValidate {
-		p.P(`if err := in.Validate(); err != nil {`)
-		p.P(`return nil, `, p.newError("InvalidArgument"), `"Invalid req:  "+err.Error())`)
-		p.P(`}`)
+		if hasValidate {
+			p.P(`if err := in.Validate(); err != nil {`)
+			p.P(`return nil, `, p.newError("InvalidArgument"), `"Invalid req:  "+err.Error())`)
+			p.P(`}`)
+		}
 	}
 }
 
