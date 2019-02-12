@@ -23,6 +23,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
 	github.com/grpc-ecosystem/grpc-gateway v1.7.0
 	github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645
+	github.com/infobloxopen/atlas-app-toolkit v0.16.2 // indirect
 	github.com/infobloxopen/go-trees v0.0.0-20180914094745-37f8b7da7ff6
 	github.com/infobloxopen/themis v0.0.0-20190206191611-6b9db8d572db
 	github.com/jinzhu/gorm v1.9.2
@@ -35,7 +36,7 @@ require (
 	github.com/prometheus/client_model v0.0.0-20190129233127-fd36f4220a90 // indirect
 	github.com/prometheus/common v0.2.0 // indirect
 	github.com/prometheus/procfs v0.0.0-20190209105433-f8d8b3f739bd // indirect
-	github.com/rigoiot/atlas-app-toolkit v0.16.3
+	github.com/rigoiot/atlas-app-toolkit v0.16.5-0.20190212063159-d3b76765d064
 	github.com/russross/blackfriday v2.0.0+incompatible // indirect
 	github.com/satori/go.uuid v1.2.0
 	github.com/shurcooL/go v0.0.0-20190121191506-3fef8c783dec // indirect
