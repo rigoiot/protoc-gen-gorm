@@ -336,10 +336,11 @@ func (p *OrmPlugin) generatePatchHandler(message *generator.Descriptor) {
 	p.P(`var pbObj `, typeName)
 	p.P(`var err error`)
 	p.generateBeforePatchHookCall(ormable, "Read")
+	p.P(`ctxV := context.WithValue(ctx, "ReadForPatch", true)`)
 	if p.readHasFieldSelection(ormable) {
-		p.P(`pbReadRes, err := DefaultRead`, typeName, `(ctx, &`, typeName, `{Id: in.GetId()}, db, nil)`)
+		p.P(`pbReadRes, err := DefaultRead`, typeName, `(ctxV, &`, typeName, `{Id: in.GetId()}, db, nil)`)
 	} else {
-		p.P(`pbReadRes, err := DefaultRead`, typeName, `(ctx, &`, typeName, `{Id: in.GetId()}, db)`)
+		p.P(`pbReadRes, err := DefaultRead`, typeName, `(ctxV, &`, typeName, `{Id: in.GetId()}, db)`)
 	}
 
 	p.P(`if err != nil {`)
