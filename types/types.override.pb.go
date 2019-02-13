@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"io"
 	"regexp"
 	"strings"
 
@@ -34,6 +35,31 @@ func (m *UUID) UnmarshalJSONPB(_ *jsonpb.Unmarshaler, data []byte) error {
 		return fmt.Errorf(`invalid uuid '%s' does not match accepted format`, m.Value)
 	}
 	return nil
+}
+
+// UnmarshalGQL implements the graphql.Marshaler interface
+func (m *UUID) UnmarshalGQL(v interface{}) error {
+	data, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("uuid must be string")
+	}
+	if data == "null" {
+		m.Value = ZeroUUID
+		return nil
+	}
+	m.Value = strings.Trim(data, `"`)
+	if !validChars.Match([]byte(m.Value)) {
+		return fmt.Errorf(`invalid uuid '%s' does not match accepted format`, m.Value)
+	}
+	return nil
+}
+
+// MarshalGQL implements the graphql.Marshaler interface
+func (m *UUID) MarshalGQL(w io.Writer) {
+	if len(m.Value) == 0 {
+		w.Write([]byte(fmt.Sprintf(`%q`, ZeroUUID)))
+	}
+	w.Write([]byte(fmt.Sprintf(`%q`, m.Value)))
 }
 
 // MarshalJSONPB overloads UUIDValue's standard PB -> JSON conversion
