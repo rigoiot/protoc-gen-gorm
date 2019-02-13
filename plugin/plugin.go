@@ -27,6 +27,7 @@ const (
 	protoTypeUUIDValue = "UUIDValue"
 	protoTypeResource  = "Identifier"
 	protoTypeInet      = "InetValue"
+	protoTypeTime      = "Time"
 )
 
 // DB Engine Enum
@@ -278,7 +279,7 @@ func (p *OrmPlugin) parseBasicFields(msg *generator.Descriptor) {
 				if p.dbEngine == ENGINE_POSTGRES {
 					fieldOpts.Tag = tagWithType(tag, "uuid")
 				}
-			} else if rawType == protoTypeTimestamp {
+			} else if rawType == protoTypeTimestamp || rawType == protoTypeTime {
 				fieldType = "time.Time"
 				typePackage = "time"
 				p.UsingGoImports("time")
@@ -783,6 +784,33 @@ func (p *OrmPlugin) generateFieldConversion(message *generator.Descriptor, field
 				p.P(`if to.`, fieldName, `, err = `, p.Import(ptypesImport), `.TimestampProto(m.`, fieldName, `); err != nil {`)
 				p.P(`return to, err`)
 				p.P(`}`)
+			}
+		} else if coreType == protoTypeTime { // Singular WKT Time ---
+			var tonillable bool
+			var mnillable bool
+			if toORM {
+				tonillable = strings.HasPrefix(ofield.Type, "*")
+				mnillable = strings.HasPrefix(fieldType, "*")
+			} else {
+				tonillable = strings.HasPrefix(fieldType, "*")
+				mnillable = strings.HasPrefix(ofield.Type, "*")
+			}
+			if mnillable {
+				p.P(`if m.`, fieldName, ` != nil {`)
+				if tonillable {
+					p.P(`temp`, fieldName, ` := *m.`, fieldName)
+					p.P(`to.`, fieldName, ` = &temp`, fieldName)
+				} else {
+					p.P(`to.`, fieldName, ` = *m.`, fieldName)
+				}
+				p.P(`}`)
+			} else {
+				if tonillable {
+					p.P(`temp`, fieldName, ` := m.`, fieldName)
+					p.P(`to.`, fieldName, ` = &temp`, fieldName)
+				} else {
+					p.P(`to.`, fieldName, ` = m.`, fieldName)
+				}
 			}
 		} else if coreType == protoTypeJSON {
 			if p.dbEngine == ENGINE_POSTGRES {
