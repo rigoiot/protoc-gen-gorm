@@ -55,7 +55,7 @@ func (m *UUID) UnmarshalGQL(v interface{}) error {
 }
 
 // MarshalGQL implements the graphql.Marshaler interface
-func (m *UUID) MarshalGQL(w io.Writer) {
+func (m UUID) MarshalGQL(w io.Writer) {
 	if len(m.Value) == 0 {
 		w.Write([]byte(fmt.Sprintf(`%q`, ZeroUUID)))
 	}
