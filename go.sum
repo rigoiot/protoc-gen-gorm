@@ -148,6 +148,8 @@ github.com/rigoiot/atlas-app-toolkit v0.16.3 h1:Z8SdYQfqgvrnzxDVuRqYLFyQKnvH2Z7b
 github.com/rigoiot/atlas-app-toolkit v0.16.3/go.mod h1:bM67ZxExISKtpS0f61D0QkPgLIntTx0dKpF90kMuh0s=
 github.com/rigoiot/atlas-app-toolkit v0.16.5-0.20190212063159-d3b76765d064 h1:LVkTfJib9TdMHL4spBRxJr2Q4ouleC1vxyAVciwkcyU=
 github.com/rigoiot/atlas-app-toolkit v0.16.5-0.20190212063159-d3b76765d064/go.mod h1:kRfk7NrOgNuZ79aPuiNCA204oTW+P13Lo2Ij9E3wRe4=
+github.com/rigoiot/atlas-app-toolkit v0.16.5-0.20190219160314-3d55877cee5f h1:NLkDF1NUzAOwYIyDjrZTCn/NK+xBe17hUMuBvbrwQqg=
+github.com/rigoiot/atlas-app-toolkit v0.16.5-0.20190219160314-3d55877cee5f/go.mod h1:kRfk7NrOgNuZ79aPuiNCA204oTW+P13Lo2Ij9E3wRe4=
 github.com/russross/blackfriday v1.5.2/go.mod h1:JO/DiYxRf+HjHt06OyowR9PTA263kcR/rfWxYHBV53g=
 github.com/russross/blackfriday v2.0.0+incompatible/go.mod h1:JO/DiYxRf+HjHt06OyowR9PTA263kcR/rfWxYHBV53g=
 github.com/satori/go.uuid v1.2.0 h1:0uYX9dsZ2yD7q2RtLRtPSdGDWzjeM3TbMJP9utgA0ww=
