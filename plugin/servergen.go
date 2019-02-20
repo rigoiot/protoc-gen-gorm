@@ -137,13 +137,13 @@ func (p *OrmPlugin) generateCreateServerMethod(service autogenService, method au
 		p.generatePreserviceCall(service.ccName, method.baseType, createService)
 		p.P(`res, err := DefaultCreate`, method.baseType, `(ctx, in.GetPayload(), db)`)
 		p.P(`if err != nil {`)
-		p.P(`return nil, `, p.newError("Internal"), `"Default create error: "+err.Error())`)
+		p.P(`return nil, err`)
 		p.P(`}`)
 		p.P(`out := &`, p.TypeName(method.outType), `{Result: res}`)
 		if p.gateway {
 			p.P(`err = `, p.Import(gatewayImport), `.SetCreated(ctx, "")`)
 			p.P(`if err != nil {`)
-			p.P(`return nil, `, p.newError("Internal"), `"Gateway SetCreated error: "+err.Error())`)
+			p.P(`return nil, err`)
 			p.P(`}`)
 		}
 		p.generatePostserviceCall(service.ccName, method.baseType, createService)
@@ -201,7 +201,7 @@ func (p *OrmPlugin) generateReadServerMethod(service autogenService, method auto
 			p.P(`res, err := DefaultRead`, typeName, `(ctx, &`, typeName, `{Id: in.GetId()}, db)`)
 		}
 		p.P(`if err != nil {`)
-		p.P(`return nil, `, p.newError("Internal"), `"Default read error: "+err.Error())`)
+		p.P(`return nil, err`)
 		p.P(`}`)
 		p.P(`out := &`, p.TypeName(method.outType), `{Result: res}`)
 		p.generatePostserviceCall(service.ccName, method.baseType, method.ccName)
@@ -268,7 +268,7 @@ func (p *OrmPlugin) generateUpdateServerMethod(service autogenService, method au
 			p.P(`res, err = DefaultStrictUpdate`, typeName, `(ctx, in.GetPayload(), db)`)
 		}
 		p.P(`if err != nil {`)
-		p.P(`return nil, `, p.newError("Internal"), `"Default update error: "+err.Error())`)
+		p.P(`return nil, err`)
 		p.P(`}`)
 		p.P(`out := &`, p.TypeName(method.outType), `{Result: res}`)
 		p.generatePostserviceCall(service.ccName, method.baseType, method.ccName)
@@ -337,7 +337,7 @@ func (p *OrmPlugin) generateDeleteServerMethod(service autogenService, method au
 		p.generatePreserviceCall(service.ccName, method.baseType, method.ccName)
 		p.P(`err := DefaultDelete`, typeName, `(ctx, &`, typeName, `{Id: in.GetId()}, db)`)
 		p.P(`if err != nil {`)
-		p.P(`return nil, `, p.newError("Internal"), `"Default delete error: "+err.Error())`)
+		p.P(`return nil, err`)
 		p.P(`}`)
 		p.P(`out := &`, p.TypeName(method.outType), `{}`)
 		p.generatePostserviceCall(service.ccName, method.baseType, method.ccName)
@@ -392,7 +392,7 @@ func (p *OrmPlugin) generateDeleteSetServerMethod(service autogenService, method
 		p.generatePreserviceCall(service.ccName, method.baseType, method.ccName)
 		p.P(`err := DefaultDelete`, typeName, `Set(ctx, objs, db)`)
 		p.P(`if err != nil {`)
-		p.P(`return nil, `, p.newError("Internal"), `"Default delete error: "+err.Error())`)
+		p.P(`return nil, err`)
 		p.P(`}`)
 		p.P(`out := &`, p.TypeName(method.outType), `{}`)
 		p.generatePostserviceCall(service.ccName, method.baseType, method.ccName)
@@ -461,7 +461,7 @@ func (p *OrmPlugin) generateListServerMethod(service autogenService, method auto
 		handlerCall += ")"
 		p.P(handlerCall)
 		p.P(`if err != nil {`)
-		p.P(`return nil, `, p.newError("Internal"), `"Default list error: "+err.Error())`)
+		p.P(`return nil, err`)
 		p.P(`}`)
 		var pageInfoIfExist string
 		if pg != "" && pi != "" {
@@ -526,7 +526,7 @@ func (p *OrmPlugin) generateValidate() {
 		}
 		if hasValidate {
 			p.P(`if err := in.Validate(); err != nil {`)
-			p.P(`return nil, `, p.newError("InvalidArgument"), `"Invalid req:  "+err.Error())`)
+			p.P(`return nil, err`)
 			p.P(`}`)
 		}
 	}
@@ -536,11 +536,11 @@ func (p *OrmPlugin) generateDBSetup(service autogenService) error {
 	if service.usesTxnMiddleware {
 		p.P(`txn, ok := `, p.Import(tkgormImport), `.FromContext(ctx)`)
 		p.P(`if !ok {`)
-		p.P(`return nil, `, p.newError("Internal"), `"Database Transaction For Request Missing")`)
+		p.P(`return nil, err`)
 		p.P(`}`)
 		p.P(`db := txn.Begin()`)
 		p.P(`if db.Error != nil {`)
-		p.P(`return nil, `, p.newError("Internal"), `"DB error: "+db.Error.Error())`)
+		p.P(`return nil, err`)
 		p.P(`}`)
 	} else {
 		p.P(`db := m.DB`)
@@ -564,7 +564,7 @@ func (p *OrmPlugin) generatePreserviceCall(svc, typeName, mthd string) {
 	p.P(`if custom, ok := interface{}(in).(`, svc, typeName, `WithBefore`, mthd, `); ok {`)
 	p.P(`var err error`)
 	p.P(`if db, err = custom.Before`, mthd, `(ctx, db); err != nil {`)
-	p.P(`return nil, `, p.newError("Internal"), `"Custom before error: "+err.Error())`)
+	p.P(`return nil, err`)
 	p.P(`}`)
 	p.P(`}`)
 }
@@ -602,7 +602,7 @@ func (p *OrmPlugin) generatePostserviceCall(svc, typeName, mthd string) {
 	p.P(`if custom, ok := interface{}(in).(`, svc, typeName, `WithAfter`, mthd, `); ok {`)
 	p.P(`var err error`)
 	p.P(`if err = custom.After`, mthd, `(ctx, out, db); err != nil {`)
-	p.P(`return nil, `, p.newError("Internal"), `"Custom after error: "+err.Error())`)
+	p.P(`return nil, err`)
 	p.P(`}`)
 	p.P(`}`)
 }
