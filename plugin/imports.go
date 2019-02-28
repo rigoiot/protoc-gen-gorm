@@ -38,7 +38,7 @@ var (
 	gormImport     = "github.com/jinzhu/gorm"
 	tkgormImport   = "github.com/rigoiot/atlas-app-toolkit/gorm"
 	uuidImport     = "github.com/satori/go.uuid"
-	authImport     = "github.com/rigoiot/atlas-app-toolkit/auth"
+	authImport     = "github.com/rigoiot/pkg/auth"
 	gormpqImport   = "github.com/jinzhu/gorm/dialects/postgres"
 	gtypesImport   = "github.com/rigoiot/protoc-gen-gorm/types"
 	ptypesImport   = "github.com/gogo/protobuf/types"
