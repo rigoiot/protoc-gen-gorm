@@ -341,11 +341,17 @@ func (p *OrmPlugin) parseBasicFields(msg *generator.Descriptor) {
 		ormable.Fields[fieldName] = f
 	}
 	if getMessageOptions(msg).GetMultiAccount() {
-		if accID, ok := ormable.Fields["AccountID"]; !ok {
-			ormable.Fields["AccountID"] = &Field{Type: "string"}
+		fieldType := fmt.Sprintf("%s.UUID", p.Import(uuidImport))
+		notNull := true
+		tag := &gorm.GormTag{
+			NotNull: &notNull,
+		}
+		if accID, ok := ormable.Fields["AccountId"]; !ok {
+			ormable.Fields["AccountId"] = &Field{Type: fieldType,
+				Package: uuidImport, GormFieldOptions: &gorm.GormFieldOptions{Tag: tagWithType(tag, "uuid")}}
 		} else {
-			if accID.Type != "string" {
-				p.Fail("Cannot include AccountID field into", ormable.Name, "as it already exists there with a different type.")
+			if accID.Type != fieldType {
+				p.Fail("Cannot include AccountId field into", ormable.Name, "as it already exists there with a different type.")
 			}
 		}
 	}
@@ -633,11 +639,11 @@ func (p *OrmPlugin) generateConvertFunctions(message *generator.Descriptor) {
 		p.generateFieldConversion(message, field, true, ofield)
 	}
 	if getMessageOptions(message).GetMultiAccount() {
-		p.P("accountID, err := ", p.Import(authImport), ".GetAccountID(ctx, nil)")
+		p.P("accountId, err := ", p.Import(authImport), ".GetAccountID(ctx, nil)")
 		p.P("if err != nil {")
 		p.P("return to, err")
 		p.P("}")
-		p.P("to.AccountID = accountID")
+		p.P("to.AccountId = accountId")
 	}
 	p.setupOrderedHasMany(message)
 	p.P(`if posthook, ok := interface{}(m).(`, typeName, `WithAfterToORM); ok {`)
