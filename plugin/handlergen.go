@@ -6,6 +6,7 @@ import (
 
 	"github.com/gogo/protobuf/protoc-gen-gogo/generator"
 	jgorm "github.com/jinzhu/gorm"
+	gorm "github.com/rigoiot/protoc-gen-gorm/options"
 )
 
 func (p *OrmPlugin) generateDefaultHandlers(file *generator.FileDescriptor) {
@@ -211,7 +212,11 @@ func (p *OrmPlugin) generateApplyFieldMask(message *generator.Descriptor) {
 	hasNested := false
 	for _, field := range message.GetField() {
 		fieldType, _ := p.GoType(message, field)
-		if field.IsMessage() && !isSpecialType(fieldType) && !field.IsRepeated() {
+		fieldOpts := getFieldOptions(field)
+		if fieldOpts == nil {
+			fieldOpts = &gorm.GormFieldOptions{}
+		}
+		if field.IsMessage() && !isSpecialType(fieldType) && !field.IsRepeated() && !fieldOpts.GetDrop() {
 			p.P(`var updated`, generator.CamelCase(field.GetName()), ` bool`)
 			hasNested = true
 		}
@@ -226,8 +231,12 @@ func (p *OrmPlugin) generateApplyFieldMask(message *generator.Descriptor) {
 	for _, field := range message.GetField() {
 		ccName := generator.CamelCase(field.GetName())
 		fieldType, _ := p.GoType(message, field)
+		fieldOpts := getFieldOptions(field)
+		if fieldOpts == nil {
+			fieldOpts = &gorm.GormFieldOptions{}
+		}
 		//  for ormable message, do recursive patching
-		if field.IsMessage() && p.isOrmable(fieldType) && !field.IsRepeated() {
+		if field.IsMessage() && p.isOrmable(fieldType) && !field.IsRepeated() && !fieldOpts.GetDrop() {
 			p.P(`if strings.HasPrefix(f, prefix+"`, ccName, `.") && !updated`, ccName, ` {`)
 			p.P(`updated`, ccName, ` = true`)
 			p.P(`if patcher.`, ccName, ` == nil {`)
@@ -257,7 +266,7 @@ func (p *OrmPlugin) generateApplyFieldMask(message *generator.Descriptor) {
 			p.P(`patchee.`, ccName, ` = patcher.`, ccName)
 			p.P(`continue`)
 			p.P(`}`)
-		} else if field.IsMessage() && !isSpecialType(fieldType) && !field.IsRepeated() {
+		} else if field.IsMessage() && !isSpecialType(fieldType) && !field.IsRepeated() && !fieldOpts.GetDrop() {
 			p.P(`if strings.HasPrefix(f, prefix+"`, ccName, `.") && !updated`, ccName, ` {`)
 			p.P(`if patcher.`, ccName, ` == nil {`)
 			p.P(`patchee.`, ccName, ` = nil`)
