@@ -445,7 +445,7 @@ func (p *OrmPlugin) generateListServerMethod(service autogenService, method auto
 		if pg != "" && pi != "" {
 			p.generatePagedRequestSetup(pg)
 		}
-		handlerCall := fmt.Sprint(`res, err := DefaultList`, method.baseType, `(ctx, db`)
+		handlerCall := fmt.Sprint(`res, count, err := DefaultList`, method.baseType, `(ctx, db`)
 		if f := p.getFiltering(method.inType); f != "" {
 			handlerCall += fmt.Sprint(",in.", f)
 		}
@@ -468,7 +468,7 @@ func (p *OrmPlugin) generateListServerMethod(service autogenService, method auto
 			p.generatePagedRequestHandling(pg)
 			pageInfoIfExist = ", " + pi + ": resPaging"
 		}
-		p.P(`out := &`, p.TypeName(method.outType), `{Results: res`, pageInfoIfExist, ` }`)
+		p.P(`out := &`, p.TypeName(method.outType), `{Results: res`, pageInfoIfExist, `, Count: count}`)
 		p.generatePostserviceCall(service.ccName, method.baseType, method.ccName)
 		p.P(`return out, nil`)
 		p.P(`}`)

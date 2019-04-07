@@ -554,17 +554,27 @@ func (p *OrmPlugin) generateListHandler(message *generator.Descriptor) {
 	} else {
 		fs = "nil"
 	}
-	listSign += fmt.Sprint(`) ([]*`, typeName, `, error) {`)
+	listSign += fmt.Sprint(`) ([]*`, typeName, `, int64, error) {`)
 	p.P(listSign)
 	p.P(`in := `, typeName, `{}`)
 	p.P(`ormObj, err := in.ToORM(ctx)`)
 	p.P(`if err != nil {`)
-	p.P(`return nil, err`)
+	p.P(`return nil, 0, err`)
 	p.P(`}`)
 	p.generateBeforeListHookCall(ormable, "ApplyQuery")
+	// For count
+	p.P(`dbForCount, err := `, p.Import(tkgormImport), `.ApplyCollectionOperators(ctx, db, &`, ormable.Name, `{}, &`, typeName, `{}, `, f, `, nil , nil , nil)`)
+	p.P(`if err != nil {`)
+	p.P(`return nil, 0, err`)
+	p.P(`}`)
+	p.P(`var count int64`)
+	p.P(`if err := dbForCount.Model(&`, typeName, `{}).Count(&count).Error; err != nil {`)
+	p.P(`return nil, 0, err`)
+	p.P(`}`)
+
 	p.P(`db, err = `, p.Import(tkgormImport), `.ApplyCollectionOperators(ctx, db, &`, ormable.Name, `{}, &`, typeName, `{}, `, f, `,`, s, `,`, pg, `,`, fs, `)`)
 	p.P(`if err != nil {`)
-	p.P(`return nil, err`)
+	p.P(`return nil, 0, err`)
 	p.P(`}`)
 	p.generateBeforeListHookCall(ormable, "Find")
 	p.P(`db = db.Where(&ormObj)`)
@@ -581,18 +591,18 @@ func (p *OrmPlugin) generateListHandler(message *generator.Descriptor) {
 
 	p.P(`ormResponse := []`, ormable.Name, `{}`)
 	p.P(`if err := db.Find(&ormResponse).Error; err != nil {`)
-	p.P(`return nil, err`)
+	p.P(`return nil, 0, err`)
 	p.P(`}`)
 	p.generateAfterListHookCall(ormable)
 	p.P(`pbResponse := []*`, typeName, `{}`)
 	p.P(`for _, responseEntry := range ormResponse {`)
 	p.P(`temp, err := responseEntry.ToPB(ctx)`)
 	p.P(`if err != nil {`)
-	p.P(`return nil, err`)
+	p.P(`return nil, 0, err`)
 	p.P(`}`)
 	p.P(`pbResponse = append(pbResponse, &temp)`)
 	p.P(`}`)
-	p.P(`return pbResponse, nil`)
+	p.P(`return pbResponse, count, nil`)
 	p.P(`}`)
 	p.generateBeforeListHookDef(ormable, "ApplyQuery")
 	p.generateBeforeListHookDef(ormable, "Find")
@@ -656,7 +666,7 @@ func (p *OrmPlugin) generateBeforeListHookCall(orm *OrmableType, suffix string) 
 	}
 	hookCall += `); err != nil {`
 	p.P(hookCall)
-	p.P(`return nil, err`)
+	p.P(`return nil, 0, err`)
 	p.P(`}`)
 	p.P(`}`)
 }
@@ -678,7 +688,7 @@ func (p *OrmPlugin) generateAfterListHookCall(orm *OrmableType) {
 	}
 	hookCall += `); err != nil {`
 	p.P(hookCall)
-	p.P(`return nil, err`)
+	p.P(`return nil, 0, err`)
 	p.P(`}`)
 	p.P(`}`)
 }
