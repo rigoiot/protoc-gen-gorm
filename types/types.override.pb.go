@@ -103,6 +103,24 @@ func (m *JSONValue) UnmarshalJSONPB(_ *jsonpb.Unmarshaler, data []byte) error {
 	return nil
 }
 
+// MarshalJSON marshal to json
+func (m *JSONValue) MarshalJSON() ([]byte, error) {
+	if len(m.Value) == 0 {
+		return []byte(""), nil
+	}
+	return []byte(m.Value), nil
+}
+
+// UnmarshalJSON unmarshal json
+func (m *JSONValue) UnmarshalJSON(data []byte) error {
+	if string(data) == "null" {
+		m.Value = ""
+		return nil
+	}
+	m.Value = string(data)
+	return nil
+}
+
 // MarshalJSONPB overloads InetValue's standard PB -> JSON conversion
 func (m *InetValue) MarshalJSONPB(*jsonpb.Marshaler) ([]byte, error) {
 	if len(m.Value) == 0 {
