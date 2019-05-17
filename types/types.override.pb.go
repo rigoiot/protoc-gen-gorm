@@ -15,6 +15,23 @@ var validChars = regexp.MustCompile("^[0-9a-f]{8}-?[0-9a-f]{4}-?[1-5][0-9a-f]{3}
 // ZeroUUID The Zero value used for non-nil, but uninitialized UUID type
 const ZeroUUID = "00000000-0000-0000-0000-000000000000"
 
+// Equal compare to UUID
+func (m *UUID) Equal(d *UUID) bool {
+	if m == d {
+		return true
+	}
+
+	if (m == nil && d != nil) || (m != nil && d == nil) {
+		return false
+	}
+
+	if m.Value == d.Value {
+		return true
+	}
+
+	return false
+}
+
 // MarshalJSONPB overloads UUID's standard PB -> JSON conversion
 func (m *UUID) MarshalJSONPB(*jsonpb.Marshaler) ([]byte, error) {
 	if len(m.Value) == 0 {
