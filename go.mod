@@ -13,7 +13,7 @@ require (
 	github.com/jinzhu/now v1.0.0 // indirect
 	github.com/lib/pq v1.0.0
 	github.com/mattn/go-sqlite3 v1.10.0 // indirect
-	github.com/rigoiot/atlas-app-toolkit v0.16.5-0.20190219160314-3d55877cee5f
+	github.com/rigoiot/atlas-app-toolkit v0.16.5
 	github.com/satori/go.uuid v1.2.0
 	golang.org/x/crypto v0.0.0-20190208162236-193df9c0f06f // indirect
 	golang.org/x/net v0.0.0-20190206173232-65e2d4e15006
@@ -23,3 +23,5 @@ require (
 	google.golang.org/grpc v1.18.0
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 )
+
+go 1.13
