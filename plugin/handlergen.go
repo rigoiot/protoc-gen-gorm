@@ -568,6 +568,7 @@ func (p *OrmPlugin) generateListHandler(message *generator.Descriptor) {
 	p.P(`return nil, 0, err`)
 	p.P(`}`)
 	p.P(`var count int64`)
+	p.P(`dbForCount = dbForCount.Where(&ormObj)`)
 	p.P(`if err := dbForCount.Model(&`, typeName, `ORM{}).Count(&count).Error; err != nil {`)
 	p.P(`return nil, 0, err`)
 	p.P(`}`)
