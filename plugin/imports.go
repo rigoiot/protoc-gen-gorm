@@ -51,6 +51,8 @@ var (
 	pqImport       = "github.com/lib/pq"
 	statusImport   = "google.golang.org/grpc/status"
 	codesImport    = "google.golang.org/grpc/codes"
+	reflectImport  = "reflect"
+	jsonImport     = "encoding/json"
 )
 
 type pkgImport struct {

@@ -625,6 +625,25 @@ func (p *OrmPlugin) generateConvertFunctions(message *generator.Descriptor) {
 	p.P(`func (m *`, typeName, `) ToORM (ctx context.Context) (`, typeName, `ORM, error) {`)
 	p.P(`to := `, typeName, `ORM{}`)
 	p.P(`var err error`)
+
+	if getMessageOptions(message).GetMultiAccount() {
+		p.P(`val := `, p.Import(reflectImport), `.ValueOf(to)`)
+		p.P(`if val.Kind() == `, p.Import(reflectImport), `.Ptr {`)
+		p.P(`val = val.Elem()`)
+		p.P(`}`)
+		p.P(`if val.FieldByName("AppCode").IsValid(){`)
+		p.P(`appCode, _ := `, p.Import(authImport), `.GetAppCode(ctx, nil)`)
+		p.P(`ormStr := fmt.Sprintf("{\"appCode\": \"%s\"}",appCode)`)
+		p.P(p.Import(jsonImport), `.Unmarshal([]byte(ormStr), &to)`)
+		p.P(`}`)
+
+		p.P("accountId, err := ", p.Import(authImport), ".GetAccountID(ctx, nil)")
+		p.P("if err != nil {")
+		p.P("return to, err")
+		p.P("}")
+		p.P("to.AccountId = accountId")
+	}
+
 	p.P(`if prehook, ok := interface{}(m).(`, typeName, `WithBeforeToORM); ok {`)
 	p.P(`if err = prehook.BeforeToORM(ctx, &to); err != nil {`)
 	p.P(`return to, err`)
@@ -632,19 +651,14 @@ func (p *OrmPlugin) generateConvertFunctions(message *generator.Descriptor) {
 	p.P(`}`)
 	for _, field := range message.GetField() {
 		// Checking if field is skipped
-		if getFieldOptions(field).GetDrop() {
+		if getFieldOptions(field).GetDrop() || (getMessageOptions(message).GetMultiAccount() && generator.CamelCase(field.GetName()) == "AppCode") ||
+			(getMessageOptions(message).GetMultiAccount() && generator.CamelCase(field.GetName()) == "AccountId") {
 			continue
 		}
 		ofield := ormable.Fields[generator.CamelCase(field.GetName())]
 		p.generateFieldConversion(message, field, true, ofield)
 	}
-	if getMessageOptions(message).GetMultiAccount() {
-		p.P("accountId, err := ", p.Import(authImport), ".GetAccountID(ctx, nil)")
-		p.P("if err != nil {")
-		p.P("return to, err")
-		p.P("}")
-		p.P("to.AccountId = accountId")
-	}
+
 	p.setupOrderedHasMany(message)
 	p.P(`if posthook, ok := interface{}(m).(`, typeName, `WithAfterToORM); ok {`)
 	p.P(`err = posthook.AfterToORM(ctx, &to)`)
