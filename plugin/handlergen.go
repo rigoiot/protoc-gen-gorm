@@ -496,36 +496,28 @@ func (p *OrmPlugin) generateDeleteSetHandler(message *generator.Descriptor) {
 	p.P(`}`)
 	p.generateBeforeDeleteSetHookCall(ormable)
 
-	p.P(`var appCode string`)
-	p.P(`var isAppCode bool`)
-	p.P(`if len(in)>0 {`)
-	p.P(`val := `, p.Import(reflectImport), `.ValueOf(in[0])`)
-	p.P(`if val.Kind() == `, p.Import(reflectImport), `.Ptr {`)
-	p.P(`val = val.Elem()`)
-	p.P(`}`)
-	p.P(`if val.FieldByName("AppCode").IsValid(){`)
-	p.P(`isAppCode = true`)
-	p.P(`appCode, _ = `, p.Import(authImport), `.GetAppCode(ctx, nil)`)
-	p.P(`}`)
-	p.P(`}`)
-
 	if getMessageOptions(message).GetMultiAccount() {
 		p.P(`acctId, err := `, p.Import(authImport), `.GetAccountID(ctx, nil)`)
 		p.P(`if err != nil {`)
 		p.P(`return err`)
 		p.P(`}`)
 
-		p.P(`if isAppCode {`)
+		p.P(`if len(in)>0 {`)
+		p.P(`val := `, p.Import(reflectImport), `.ValueOf(in[0])`)
+		p.P(`if val.Kind() == `, p.Import(reflectImport), `.Ptr {`)
+		p.P(`val = val.Elem()`)
+		p.P(`}`)
+		p.P(`if val.FieldByName("AppCode").IsValid(){`)
+		p.P(`appCode, _ := `, p.Import(authImport), `.GetAppCode(ctx, nil)`)
 		p.P(`err = db.Where("account_id = ? AND app_code = ? AND `, jgorm.ToDBName(pkName), ` in (?)", acctId, appCode, keys).Delete(&`, ormable.Name, `{}).Error`)
 		p.P(`} else {`)
 		p.P(`err = db.Where("account_id = ? AND `, jgorm.ToDBName(pkName), ` in (?)", acctId, keys).Delete(&`, ormable.Name, `{}).Error`)
 		p.P(`}`)
-	} else {
-		p.P(`if isAppCode {`)
-		p.P(`err = db.Where("app_code = ? AND `, jgorm.ToDBName(pkName), ` in (?)", appCode, keys).Delete(&`, ormable.Name, `{}).Error`)
 		p.P(`} else {`)
-		p.P(`err = db.Where("`, jgorm.ToDBName(pkName), ` in (?)", keys).Delete(&`, ormable.Name, `{}).Error`)
+		p.P(`err = db.Where("account_id = ? AND `, jgorm.ToDBName(pkName), ` in (?)", acctId, keys).Delete(&`, ormable.Name, `{}).Error`)
 		p.P(`}`)
+	} else {
+		p.P(`err = db.Where("`, jgorm.ToDBName(pkName), ` in (?)", keys).Delete(&`, ormable.Name, `{}).Error`)
 	}
 	p.P(`if err != nil {`)
 	p.P(`return err`)
@@ -600,15 +592,6 @@ func (p *OrmPlugin) generateListHandler(message *generator.Descriptor) {
 	p.P(`return nil, 0, err`)
 	p.P(`}`)
 
-	p.P(`val := `, p.Import(reflectImport), `.ValueOf(in)`)
-	p.P(`if val.Kind() == `, p.Import(reflectImport), `.Ptr {`)
-	p.P(`val = val.Elem()`)
-	p.P(`}`)
-	p.P(`appCode, _ := `, p.Import(authImport), `.GetAppCode(ctx, nil)`)
-	p.P(`if val.FieldByName("AppCode").IsValid(){`)
-	p.P(`dbForCount = dbForCount.Where(map[string]interface{}{"app_code": appCode})`)
-	p.P("}")
-
 	p.P(`var count int64`)
 	p.P(`dbForCount = dbForCount.Where(&ormObj)`)
 	p.P(`if err := dbForCount.Model(&`, typeName, `ORM{}).Count(&count).Error; err != nil {`)
@@ -621,9 +604,6 @@ func (p *OrmPlugin) generateListHandler(message *generator.Descriptor) {
 	p.P(`}`)
 	p.generateBeforeListHookCall(ormable, "Find")
 	p.P(`db = db.Where(&ormObj)`)
-	p.P(`if val.FieldByName("AppCode").IsValid(){`)
-	p.P(`db = db.Where(map[string]interface{}{"app_code": appCode})`)
-	p.P("}")
 
 	// add default ordering by primary key
 	if p.hasPrimaryKey(ormable) {
